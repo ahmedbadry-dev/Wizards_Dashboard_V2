@@ -8,10 +8,10 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
 };
 
 const toneClassNames: Record<BadgeTone, string> = {
-  success: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-  warning: "border-primary/30 bg-primary/10 text-primary",
+  success: "border-accent/30 bg-accent/10 text-accent",
+  warning: "border-accent/30 bg-accent/10 text-accent",
   danger: "border-danger/30 bg-danger/10 text-danger",
-  neutral: "border-secondary-light/30 bg-secondary-light/10 text-secondary-light",
+  neutral: "border-body-muted/30 bg-body-muted/10 text-body-muted",
 };
 
 export function Badge({ children, tone = "neutral", className, ...props }: BadgeProps) {

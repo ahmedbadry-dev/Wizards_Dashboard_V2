@@ -1,21 +1,27 @@
 
 import { lazy, Suspense, useState } from "react";
 
-import { WizardTableHeader } from "./WizardTableHeader";
-import { WizardTableRow } from "./WizardTableRow";
 import { WizardTableToolbar } from "./WizardTableToolbar";
 import { useWizards } from "../hooks/useWizards";
-import { Pagination } from "./Pagination";
+import { Pagination } from "../../../components/ui/Pagination";
 import { usePagination } from "../../../hooks/usePagination";
 import type { Wizard } from "../types/wizard";
-import { WizardTableSkeleton } from "./WizardTableSkeleton";
+import { WizardCardList } from "./WizardCardList";
+import { WizardDesktopTable } from "./WizardDesktopTable";
 
 const WizardDetailsModal = lazy(() => import("./WizardDetailsModal"));
 
 export const WizardsTable = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedWizard, setSelectedWizard] = useState<Wizard | null>(null)
-  const { wizards, isLoading, isFetching, isError, error } = useWizards(searchValue)
+  const {
+    wizards,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    debouncedSearch,
+  } = useWizards(searchValue)
 
   const {
     pageCount,
@@ -33,67 +39,40 @@ export const WizardsTable = () => {
   };
 
   return (
-    <section className="mt-8 overflow-hidden rounded-lg border border-border/30 bg-card card-effect">
+    <section className="mt-8 overflow-hidden rounded-card border border-primary/10 bg-canvas/80 shadow-card backdrop-blur-card">
       <WizardTableToolbar
         searchValue={searchValue}
+        isSearchPending={searchValue.trim() !== debouncedSearch.trim()}
         onSearchChange={handleSearchChange}
       />
 
-      <div className="overflow-x-auto">
-        <table className="min-w-215 w-full border-collapse">
-          <WizardTableHeader />
-          <tbody>
-            {isLoading ? (
-              <WizardTableSkeleton />
-            ) : null}
+      <WizardCardList
+        wizards={visibleItems}
+        isLoading={isLoading}
+        isError={isError}
+        error={error instanceof Error ? error : null}
+        onView={setSelectedWizard}
+      />
 
-            {isError ? (
-              <tr>
-                <td className="px-6 py-14 text-center text-sm text-danger" colSpan={5}>
-                  {error instanceof Error
-                    ? error.message
-                    : "Unable to load wizard records"}
-                </td>
-              </tr>
-            ) : null}
+      <WizardDesktopTable
+        wizards={visibleItems}
+        isLoading={isLoading}
+        isError={isError}
+        error={error instanceof Error ? error : null}
+        onView={setSelectedWizard}
+      />
 
-            {!isLoading && !isError && visibleItems.length === 0 ? (
-              <tr>
-                <td className="px-6 py-14 text-center text-sm text-muted" colSpan={5}>
-                  No wizard records found.
-                </td>
-              </tr>
-            ) : null}
-
-            {!isLoading && !isError
-              ? visibleItems.map((wizard) => (
-                <WizardTableRow
-                  key={wizard.id}
-                  wizard={wizard}
-                  onView={() => setSelectedWizard(wizard)}
-                />
-              ))
-              : null}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-col justify-center items-center gap-4 bg-card-light/50 border-t border-border/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="hidden text-sm text-secondary-light lg:block">
-          Showing{" "}
-          {wizards.length > 0
-            ? `${pageStartIndex + 1}-${pageEndIndex} of ${wizards.length}`
-            : "0"}{" "}
-          Records
-          {isFetching && !isLoading ? (
-            <span className="ml-2 text-muted">Updating...</span>
-          ) : null}
-        </p>
-
+      <div className="relative">
+        {isFetching && !isLoading ? (
+          <p className="px-4 pt-3 text-sm text-disabled sm:px-6">Updating...</p>
+        ) : null}
         <Pagination
+          currentPage={safeCurrentPage}
           pageCount={pageCount}
           onPageChange={setCurrentPage}
-          safeCurrentPage={safeCurrentPage}
+          totalItems={wizards.length}
+          pageStartIndex={pageStartIndex}
+          pageEndIndex={pageEndIndex}
         />
       </div>
 

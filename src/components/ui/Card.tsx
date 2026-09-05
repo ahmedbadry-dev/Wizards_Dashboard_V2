@@ -11,7 +11,7 @@ export function Card({ children, className }: CardProps) {
   return (
     <section
       className={cn(
-        "rounded-xl border border-border/30 bg-card/80 p-6 card-effect",
+        "glass-card p-4 sm:p-6",
         className,
       )}
     >

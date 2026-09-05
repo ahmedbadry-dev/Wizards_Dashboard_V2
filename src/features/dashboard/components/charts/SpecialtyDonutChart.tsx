@@ -1,5 +1,6 @@
 
 import {
+    Cell,
     Pie,
     PieChart,
     ResponsiveContainer,
@@ -22,9 +23,9 @@ type SpecialtyTooltipProps = {
 }
 
 const specialtyData: SpecialtyDataPoint[] = [
-    { name: "Alchemists", value: 45, color: "#D0BCFF" },
-    { name: "Transmuters", value: 30, color: "#FFB95F" },
-    { name: "Conjurers", value: 25, color: "#BCC7DE" },
+    { name: "Alchemists", value: 45, color: "var(--color-primary)" },
+    { name: "Transmuters", value: 30, color: "var(--color-accent)" },
+    { name: "Conjurers", value: 25, color: "var(--color-body-muted)" },
 ]
 
 const totalSpecialists = '1.2k'
@@ -37,22 +38,22 @@ function SpecialtyTooltip({ active, payload }: SpecialtyTooltipProps) {
     const item = payload[0].payload
 
     return (
-        <div className="rounded-lg border border-secondary-light/20 bg-surface px-3 py-2 shadow-elixir">
-            <p className="text-xs font-semibold text-text">{item.name}</p>
-            <p className="text-xs text-secondary-light">{item.value}% of registry</p>
+        <div className="rounded-lg border border-body-muted/20 bg-surface px-3 py-2 shadow-primary">
+            <p className="text-xs font-semibold text-heading">{item.name}</p>
+            <p className="text-xs text-body-muted">{item.value}% of registry</p>
         </div>
     )
 }
 
 export const SpecialtyDonutChart = () => {
     return (
-        <Card className="h-99.5 min-w-0 ">
-            <div className="mb-6">
-                <h2 className="heading-2">Wizard by Specialties</h2>
+        <Card className="h-[340px] min-w-0 lg:h-[398px]">
+            <div className="mb-4 lg:mb-6">
+                <h2 className="section-title">Wizard by Specialties</h2>
             </div>
 
-            <div className="relative h-47.5">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="relative h-[160px] min-w-0 lg:h-[190px]">
+                <ResponsiveContainer width="100%" height="100%" debounce={100}>
                     <PieChart>
                         <Tooltip
                             content={<SpecialtyTooltip />}
@@ -64,25 +65,30 @@ export const SpecialtyDonutChart = () => {
                             nameKey="name"
                             cx="50%"
                             cy="50%"
-                            innerRadius={80}
-                            outerRadius={95}
+                            innerRadius="62%"
+                            outerRadius="74%"
                             stroke="none"
-                            fill="#273647"
-                        />
+                            fill="var(--color-surface-input)"
+                            isAnimationActive={false}
+                        >
+                            {specialtyData.map((item) => (
+                                <Cell key={item.name} fill={item.color} />
+                            ))}
+                        </Pie>
                     </PieChart>
                 </ResponsiveContainer>
 
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="heading-2">
+                    <span className="section-title">
                         {totalSpecialists}
                     </span>
-                    <span className="text-xs font-medium uppercase tracking-wide text-muted">
+                    <span className="text-xs font-medium uppercase tracking-wide text-disabled">
                         Total
                     </span>
                 </div>
             </div>
 
-            <div className="mt-6 space-y-1.75">
+            <div className="mt-5 space-y-1.75 lg:mt-6">
                 {specialtyData.map((item) => (
                     <div key={item.name} className="flex items-center justify-between gap-4">
                         <div className="flex min-w-0 items-center gap-3">
@@ -90,11 +96,11 @@ export const SpecialtyDonutChart = () => {
                                 className="h-3 w-3 shrink-0 rounded-full"
                                 style={{ backgroundColor: item.color }}
                             />
-                            <span className="truncate text-sm font-semibold text-text">
+                            <span className="truncate text-sm font-semibold text-heading">
                                 {item.name}
                             </span>
                         </div>
-                        <span className="text-sm font-semibold text-secondary-light">
+                        <span className="text-sm font-semibold text-body-muted">
                             {item.value}%
                         </span>
                     </div>

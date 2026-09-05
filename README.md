@@ -15,16 +15,18 @@ The project was built from the provided design and uses the Wizard World API for
 
 ## Features
 
-- Dashboard layout with sidebar and top navbar
+- Mobile-first dashboard layout with a 64px topbar
+- Drawer navigation below `xl` and a 256px permanent sidebar at `xl`
 - KPI cards using static data from the design
 - Registry activity chart
 - Wizards by specialty chart
-- Wizards table using real API data
+- Wizards table using real API data at desktop widths
+- Paginated wizard cards below `xl`
 - Search by wizard name
 - 400ms debounce before sending search request
-- Client side pagination
+- Client side pagination with 4 records per page on every viewport
 - Loading, error, and empty states
-- Wizard details modal
+- Responsive wizard details modal that becomes a 70dvh bottom sheet on phones
 - Handles missing first name or last name
 
 ## API
@@ -72,12 +74,15 @@ npm run lint
 
 - The API returns all wizards at once, so pagination is handled on the client side.
 - When the search value changes, the page resets back to page 1.
+- The same paginated records are used for the mobile/tablet cards and the desktop table.
+- Mobile pagination shows Previous, Page X of Y, and Next; numbered page controls appear from tablet widths.
+- The permanent sidebar and desktop table start at Tailwind's `xl` breakpoint so 1024px screens keep enough content width.
+- The modal and drawer both close with Escape and backdrop clicks, and body scrolling is locked while either is open.
 - If a wizard has no first name or last name, the UI shows a fallback value instead of breaking.
+- Responsive review targeted 320px, 375px, 390px, 640px, 768px, 1024px, 1280px, and 1440px widths.
 
 ## What I Would Improve With More Time
 
-- Make the mobile layout better.
-- Add more accurate spacing from the Figma file.
 - Add tests for search and pagination.
-- Improve the chart details and tooltips.
+- Add visual regression screenshots against the Figma frames.
 - Add a real filter instead of only the filter button UI.
