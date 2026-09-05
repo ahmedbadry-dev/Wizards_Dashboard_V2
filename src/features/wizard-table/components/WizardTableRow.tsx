@@ -2,38 +2,31 @@
 import { IconEye } from "../../../components/icons";
 import { Badge } from "../../../components/ui/Badge";
 import type { Wizard } from "../types/wizard";
+import {
+  formatWizardId,
+  getWizardDisplayName,
+  getWizardNameParts,
+} from "../utils/wizardFormatters";
 
 type WizardTableRowProps = {
   wizard: Wizard,
   onView: () => void;
 };
 
-const formatWizardId = (id: string) => {
-  if (id.length <= 16) {
-    return id;
-  }
-
-  return `${id.slice(0, 8)}...${id.slice(-6)}`;
-};
-
-const getNameParts = (wizard: Wizard) => ({
-  firstName: wizard.firstName?.trim() || "(None)",
-  lastName: wizard.lastName?.trim() || "Unknown",
-});
-
 export const WizardTableRow = ({ wizard, onView }: WizardTableRowProps) => {
-  const { firstName, lastName } = getNameParts(wizard);
+  const { firstName, lastName } = getWizardNameParts(wizard);
+  const displayName = getWizardDisplayName(wizard);
   const elixirs = wizard.elixirs ?? [];
   const hiddenElixirs = elixirs.slice(2);
   const hiddenElixirsTooltipId = `wizard-${wizard.id}-hidden-elixirs`;
 
   return (
-    <tr className="border-b border-border/40 transition-colors hover:bg-white/3">
-      <td className="whitespace-nowrap px-6 py-5 text-sm font-medium text-secondary-soft">
+    <tr className="border-b border-border/40 transition-colors hover:bg-primary/5">
+      <td className="whitespace-nowrap px-6 py-5 text-sm font-medium text-primary">
         {formatWizardId(wizard.id)}
       </td>
-      <td className="px-6 py-5 text-sm text-text">{firstName}</td>
-      <td className="px-6 py-5 text-sm font-semibold text-text">{lastName}</td>
+      <td className="px-6 py-5 text-sm text-heading">{firstName}</td>
+      <td className="px-6 py-5 text-sm font-semibold text-heading">{lastName}</td>
       <td className="px-6 py-5">
         {elixirs.length > 0 ? (
           <div className="flex max-w-xl flex-wrap gap-2">
@@ -60,7 +53,7 @@ export const WizardTableRow = ({ wizard, onView }: WizardTableRowProps) => {
                 <span
                   id={hiddenElixirsTooltipId}
                   role="tooltip"
-                  className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-max max-w-72 rounded-lg border border-secondary-light/20 bg-surface px-3 py-2 text-xs text-text opacity-0  transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+                  className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-max max-w-72 rounded-lg border border-body-muted/20 bg-surface px-3 py-2 text-xs text-heading opacity-0  transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
                 >
                   {hiddenElixirs.map((elixir) => (
                     <span key={elixir.id} className="block max-w-64 truncate">
@@ -72,14 +65,14 @@ export const WizardTableRow = ({ wizard, onView }: WizardTableRowProps) => {
             ) : null}
           </div>
         ) : (
-          <span className="text-sm text-muted">None registered</span>
+          <span className="text-sm text-disabled">None registered</span>
         )}
       </td>
       <td className="px-6 py-5 text-right">
         <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-secondary-light transition-colors hover:bg-white/10 hover:text-text"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-body-muted transition-colors hover:bg-primary/10 hover:text-heading"
           type="button"
-          aria-label={`View ${firstName} ${lastName}`}
+          aria-label={`View ${displayName}`}
           onClick={onView}
         >
           <IconEye className="h-5 w-5" />

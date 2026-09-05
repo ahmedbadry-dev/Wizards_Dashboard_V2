@@ -4,6 +4,11 @@ import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 import { Modal } from "../../../components/ui/Modal";
 import type { Wizard } from "../types/wizard";
+import {
+    createRegistryId,
+    getWizardDisplayName,
+    getWizardNameParts,
+} from "../utils/wizardFormatters";
 
 type WizardDetailsModalProps = {
     wizard: Wizard;
@@ -16,17 +21,10 @@ const WizardDetailsModal = ({
     isOpen,
     onClose
 }: WizardDetailsModalProps) => {
-    const firstName = wizard.firstName?.trim() || "Unknown";
-    const lastName = wizard.lastName?.trim() || "Unknown";
+    const { firstName, lastName } = getWizardNameParts(wizard);
     const elixirs = wizard.elixirs ?? [];
-
-    const fullName = [wizard.firstName?.trim(), wizard.lastName?.trim()]
-        .filter(Boolean)
-        .join(" ") || "Unknown";
-
-    const registryId = wizard.id
-        ? `WR-${wizard.id.slice(0, 4).toUpperCase()}-${lastName.slice(0, 2).toUpperCase()}`
-        : "WR-0000-UN";
+    const fullName = getWizardDisplayName(wizard);
+    const registryId = createRegistryId(wizard);
 
     return (
         <Modal
@@ -34,29 +32,29 @@ const WizardDetailsModal = ({
             onClose={onClose}
             title={`${fullName} profile`}
         >
-            <div className="max-h-[90vh] overflow-y-auto scrollbar-themed">
-                <header className="flex items-start justify-between gap-6 border-b border-border/30 px-6 py-5 sm:px-8">
-                    <div>
-                        <p className="heading-3 font-normal text-[16px] text-secondary-soft uppercase">Member Profile</p>
-                        <h2 className="mt-1 text-2xl font-semibold leading-10 text-text lg:text-3xl">{fullName}</h2>
+            <header className="flex shrink-0 flex-col gap-3 border-b border-border/30 px-4 pb-4 pt-3 sm:px-6 xl:flex-row xl:items-start xl:justify-between xl:px-8 xl:py-5">
+                    <div className="min-w-0">
+                        <p className="kpi-label font-normal text-primary">Member Profile</p>
+                        <h2 className="mt-1 break-words text-2xl font-semibold leading-8 text-heading xl:text-3xl xl:leading-10">{fullName}</h2>
                     </div>
 
-                    <div className="text-right">
-                        <p className="text-[16px] text-secondary-light">Registry ID</p>
-                        <p className="mt-1 text-primary sm:text-2xl lg:heading-2 lg:text-primary">{registryId}</p>
+                    <div className="min-w-0 xl:text-right">
+                        <p className="text-sm text-body-muted sm:text-base">Registry ID</p>
+                        <p className="mt-1 break-all text-base font-semibold text-primary sm:text-2xl xl:text-2xl">{registryId}</p>
                     </div>
-                </header>
+            </header>
 
-                <div className="grid grid-cols-12 gap-8 px-6 py-6 sm:px-8">
-                    <aside className="col-span-12 lg:col-span-4">
-                        <div className="relative mx-auto flex h-54 w-54 items-center justify-center">
-                            <div className="absolute inset-0 rounded-full  bg-linear-to-br from-secondary-soft/20 to-primary/20 opacity-50 blur-2xl" />
-                            <div className="absolute inset-3 rounded-full border-2 border-secondary-soft/30" />
-                            <div className="relative h-46 w-46 overflow-hidden rounded-full border border-primary/30 bg-bg/70 ">
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 scrollbar-themed sm:px-6 xl:px-8 xl:py-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-12 xl:gap-8">
+                    <aside className="md:col-span-4">
+                        <div className="relative mx-auto flex h-32 w-32 items-center justify-center xl:h-54 xl:w-54">
+                            <div className="absolute inset-0 rounded-full  bg-linear-to-br from-primary/20 to-accent/20 opacity-50 blur-2xl" />
+                            <div className="absolute inset-3 rounded-full border-2 border-primary/30" />
+                            <div className="relative h-28 w-28 overflow-hidden rounded-full border border-primary/30 bg-canvas/70 xl:h-46 xl:w-46">
                                 <img
                                     src="/images/member-demo-profile.jpg"
-                                    alt=""
-                                    className="h-46 w-46 object-cover"
+                                    alt={`${fullName} profile portrait`}
+                                    className="h-full w-full object-cover"
                                 />
                             </div>
                         </div>
@@ -67,59 +65,59 @@ const WizardDetailsModal = ({
                         </div>
                     </aside>
 
-                    <section className="min-w-0 col-span-12 lg:col-span-8">
-                        <div className="grid gap-6 rounded-lg bg-bg/45 p-6 sm:grid-cols-2">
+                    <section className="min-w-0 md:col-span-8">
+                        <div className="grid gap-4 rounded-lg bg-canvas/45 p-4 sm:grid-cols-2 xl:gap-6 xl:p-6">
                             <div>
-                                <p className=" text-secondary-light">First Name</p>
-                                <p className="mt-2 font-semibold text-text">{firstName}</p>
+                                <p className="text-sm text-body-muted">First Name</p>
+                                <p className="mt-2 break-words font-semibold text-heading">{firstName}</p>
                             </div>
                             <div>
-                                <p className=" text-secondary-light">Last Name</p>
-                                <p className="mt-2 font-semibold text-text">{lastName}</p>
+                                <p className="text-sm text-body-muted">Last Name</p>
+                                <p className="mt-2 break-words font-semibold text-heading">{lastName}</p>
                             </div>
                             <div>
-                                <p className="text-secondary-light">Registry Status</p>
+                                <p className="text-sm text-body-muted">Registry Status</p>
                                 <p className="mt-2 flex items-center gap-2 font-semibold text-primary">
                                     <span className="h-2 w-2 rounded-full bg-primary" />
                                     Active
                                 </p>
                             </div>
                             <div>
-                                <p className="text-secondary-light">Primary Specialty</p>
-                                <p className="mt-2 font-semibold text-text">
+                                <p className="text-sm text-body-muted">Primary Specialty</p>
+                                <p className="mt-2 break-words font-semibold text-heading">
                                     Domestic Alchemy & Cleaning Charms
                                 </p>
                             </div>
                         </div>
 
-                        <div className="mt-7">
-                            <h3 className="flex items-center gap-2 text-xl leading-8 text-text ">
-                                <IconFlaskFilled className="h-5 w-5 text-secondary-soft" />
+                        <div className="mt-6 xl:mt-7">
+                            <h3 className="flex items-center gap-2 text-xl leading-8 text-heading ">
+                                <IconFlaskFilled className="h-5 w-5 text-primary" />
                                 Associated Elixirs
                             </h3>
                             <div className="mt-3 border-t border-border/30 pt-5">
                                 {elixirs.length > 0 ? (
-                                    <div className="max-h-48 space-y-3 overflow-y-auto pr-1">
+                                    <div className="space-y-3">
                                         {elixirs.map((elixir) => (
                                             <div
                                                 key={elixir.id}
-                                                className="flex items-center gap-4 rounded-lg bg-card-light/40 p-3"
+                                                className="flex min-h-11 items-center gap-3 rounded-lg bg-surface-raised/40 p-3 xl:gap-4"
                                             >
-                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-secondary-soft/20 bg-secondary-soft/10">
-                                                    <IconMagicWand className="h-5 w-5 text-secondary-soft" />
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-primary/20 bg-primary/10">
+                                                    <IconMagicWand className="h-5 w-5 text-primary" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
-                                                    <p className="truncate font-medium text-text" title={elixir.name}>
+                                                    <p className="truncate font-medium text-heading" title={elixir.name}>
                                                         {elixir.name}
                                                     </p>
-                                                    <p className="text-sm text-secondary-light">Inventory: 142 Units</p>
+                                                    <p className="text-sm text-body-muted">Inventory: 142 Units</p>
                                                 </div>
-                                                <span className="text-2xl text-secondary-light"><IconChevronRight /></span>
+                                                <span className="text-2xl text-body-muted" aria-hidden="true"><IconChevronRight /></span>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="rounded-lg bg-card-light/35 p-4 text-sm text-muted">
+                                    <div className="rounded-lg bg-surface-raised/35 p-4 text-sm text-disabled">
                                         No elixirs registered.
                                     </div>
                                 )}
@@ -127,17 +125,17 @@ const WizardDetailsModal = ({
                         </div>
                     </section>
                 </div>
+            </div>
 
-                <footer className="flex items-center justify-end gap-6 border-t border-border/30 px-6 py-5 sm:px-8">
+            <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-border/30 px-4 pt-4 sm:flex-row sm:items-center sm:justify-end sm:px-6 xl:gap-6 xl:px-8 xl:py-5" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
                     <Button variant="ghost" onClick={onClose}>
                         Close
                     </Button>
-                    <Button className="gap-2 px-6 shadow-elixir" >
+                    <Button className="w-full gap-2 px-6 sm:w-auto" >
                         <IconEdit className="h-4 w-4" />
                         Edit Record
                     </Button>
-                </footer>
-            </div>
+            </footer>
         </Modal>
     );
 };
