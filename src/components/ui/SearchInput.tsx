@@ -7,11 +7,11 @@ type SearchInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export function SearchInput({ className, ...props }: SearchInputProps) {
   return (
-    <label className={cn("flex w-full items-center gap-3  border border-border bg-surface px-4 py-2 text-sm text-muted", className)}>
-      <IconSearch className="h-3 w-3 shrink-0 text-secondary-light" />
+    <label className={cn("relative flex w-full items-center text-sm", className)}>
+      <IconSearch className="pointer-events-none absolute left-4 h-4 w-4 shrink-0 text-body-muted" />
       <input
         type="search"
-        className={"w-full bg-transparent text-text outline-0"}
+        className="search-field w-full"
         {...props}
       />
     </label>
